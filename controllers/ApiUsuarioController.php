@@ -84,26 +84,32 @@ class ApiUsuarioController {
             $array_datos= json_decode(json_encode($datos), true);
             $usuario= new Usuario($array_datos);
 
-            //sólo si el usuario está confirmado podrá iniciar sesión
-            if ($usuario->esta_confirmado()) {
-                $login= $usuario->login($array_datos);
-
-                if ($login) {
-                    $_SESSION['usuario']= $usuario->getEmail();
-                    $result= json_decode(ResponseHttp::statusMessage(200, "Login completado"));
-
-                    if ($usuario->es_admin($usuario->getEmail())) {
-                        $_SESSION['admin']= true;
+            //comprobamos que el email introducido existe
+            if ($usuario->esta_registrado()) {
+                //sólo si el usuario está confirmado podrá iniciar sesión
+                if ($usuario->esta_confirmado()) {
+                    $login= $usuario->login($array_datos);
+    
+                    if ($login) {
+                        $_SESSION['usuario']= $usuario->getEmail();
+                        $result= json_decode(ResponseHttp::statusMessage(200, "Login completado"));
+    
+                        if ($usuario->es_admin($usuario->getEmail())) {
+                            $_SESSION['admin']= true;
+                        }
+                        header("Location: ". $_ENV['BASE_URL']);
                     }
-                    header("Location: ". $_ENV['BASE_URL']);
+                    else {
+                        $result= json_decode(ResponseHttp::statusMessage(400, "Login fallido"));
+                    }
                 }
                 else {
-                    $result= json_decode(ResponseHttp::statusMessage(400, "Login fallido"));
+                    $result= json_decode(ResponseHttp::statusMessage(400, "El usuario no está confirmado"));
                 }
             }
             else {
-                $result= json_decode(ResponseHttp::statusMessage(400, "El usuario no está confirmado"));
-            }
+                $result= json_decode(ResponseHttp::statusMessage(400, "Ese usuario no está registrado"));
+            }            
         } 
         else {
             $result= json_decode(ResponseHttp::statusMessage(400, "No puede haber campos vacíos"));
