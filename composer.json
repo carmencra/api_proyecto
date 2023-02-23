@@ -1,0 +1,21 @@
+{
+    "name": "carme/api_proyecto",
+    "autoload": {
+        "psr-4": {
+            "carme/api_proyecto\\" : "./",
+            "Controllers\\" : "./Controllers",
+            "Models\\" : "./Models",
+            "Lib\\" : "./Lib"
+        }
+    },
+    "authors": [
+        {
+            "name": "carmen"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.5",
+        "firebase/php-jwt": "^6.3",
+        "phpmailer/phpmailer": "^6.7"
+    }
+}
